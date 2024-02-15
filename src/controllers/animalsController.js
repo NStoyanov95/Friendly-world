@@ -69,7 +69,16 @@ router.get('/:animalId/edit', async (req, res) => {
     }
 })
 
+router.post('/:animals/edit', async (req, res) => {
+    const animal = req.body;
 
+    try {
+        await animalsService.update(req.params.animals, animal);
+        res.redirect(`/animals/${req.params.animals}/details`)
+    } catch (error) {
+        res.render('animals/edit', { error: getErrorMessage(error), animal });
+    }
+})
 
 
 module.exports = router;
