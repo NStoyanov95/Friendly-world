@@ -3,33 +3,33 @@ const mongoose = require('mongoose');
 const animalSchema = new mongoose.Schema({
     name: {
         type: String,
-        required:true,
+        required: [true, 'Please enter name'],
     },
     years: {
         type: Number,
-        required:true,
+        required: [true, 'Please enter years'],
     },
     kind: {
         type: String,
-        required:true,
+        required: [true, 'Please enter kind'],
     },
     image: {
         type: String,
-        required:true,
+        required: [true, 'Please enter image'],
     },
     need: {
         type: String,
-        required:true,
+        required: [true, 'Please enter need'],
     },
     location: {
         type: String,
-        required:true,
+        required: [true, 'Please enter location'],
     },
     description: {
         type: String,
-        required:true,
+        required: [true, 'Please enter description'],
     },
-    donations:[{
+    donations: [{
         type: mongoose.Types.ObjectId,
         ref: 'User',
     }],
@@ -37,7 +37,7 @@ const animalSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'User',
     }
-},{
+}, {
     timestamps: true
 });
 

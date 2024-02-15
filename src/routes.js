@@ -9,6 +9,4 @@ router.use('/auth', authController);
 router.use('/animals', animalsController);
 
 
-
-
 module.exports = router;
