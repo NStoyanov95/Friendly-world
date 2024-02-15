@@ -34,6 +34,11 @@
                     {{/if}}
                 </nav>
             </header>
+            {{#if error}}
+            <div>
+                <p>{{error}}</p>
+            </div>
+            {{/if}}
             {{{body}}}
         </div>
         <footer>
