@@ -33,7 +33,19 @@ router.get('/:animalId/details', async (req, res) => {
         const animal = await animalsService.getOne(req.params.animalId).lean();
         const isUser = req.user;
         const isOwner = req.user?._id == animal.owner._id;
-        res.render('animals/details', { animal, isUser, isOwner })
+        const isDonate = animal.donations.some(x => x._id == req.user?._id);
+        res.render('animals/details', { animal, isUser, isOwner, isDonate })
+    } catch (error) {
+        res.redirect('/404');
+    }
+});
+
+router.get('/:animalId/donate', async(req,res)=>{
+    const userId = req.user?._id
+    try {
+        await animalsService.donate(req.params.animalId, userId);
+        res.redirect(`/animals/${req.params.animalId}/details`);
+        
     } catch (error) {
         res.redirect('/404');
     }
