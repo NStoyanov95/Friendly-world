@@ -22,12 +22,12 @@ exports.login = async (loginData) => {
     const user = await User.findOne({ email: loginData.email });
 
     if (!user) {
-        throw new Error('Invalid username or password.');
+        throw new Error('Invalid email or password.');
     }
 
     const isValid = await bcrypt.compare(loginData.password, user.password);
     if (!isValid) {
-        throw new Error('Invalid username or password.');
+        throw new Error('Invalid email or password.');
     }
 
     const token = await generateToken(user);
@@ -38,7 +38,6 @@ function generateToken(user) {
     const payload = {
         _id: user._id,
         email: user.email,
-        username: user.username
     };
 
     return jwt.sign(payload, ENV.SECRET, { expiresIn: '1d' });
