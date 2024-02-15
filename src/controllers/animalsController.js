@@ -26,6 +26,17 @@ router.get('/dashboard', async (req, res) => {
     } catch (error) {
         res.redirect('/404');
     }
+});
+
+router.get('/:animalId/details', async (req, res) => {
+    try {
+        const animal = await animalsService.getOne(req.params.animalId).lean();
+        const isUser = req.user;
+        const isOwner = req.user?._id == animal.owner._id;
+        res.render('animals/details', { animal, isUser, isOwner })
+    } catch (error) {
+        res.redirect('/404');
+    }
 })
 
 
