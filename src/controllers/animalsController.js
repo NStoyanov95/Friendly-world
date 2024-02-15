@@ -65,7 +65,7 @@ router.get('/:animalId/edit', async (req, res) => {
         const animal = await animalsService.getOne(req.params.animalId).lean();
         res.render('animals/edit', { animal });
     } catch (error) {
-        res.redirect('/404')
+        res.redirect('/404');
     }
 })
 
@@ -74,7 +74,7 @@ router.post('/:animals/edit', async (req, res) => {
 
     try {
         await animalsService.update(req.params.animals, animal);
-        res.redirect(`/animals/${req.params.animals}/details`)
+        res.redirect(`/animals/${req.params.animals}/details`);
     } catch (error) {
         res.render('animals/edit', { error: getErrorMessage(error), animal });
     }
