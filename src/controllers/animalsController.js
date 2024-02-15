@@ -40,14 +40,32 @@ router.get('/:animalId/details', async (req, res) => {
     }
 });
 
-router.get('/:animalId/donate', async(req,res)=>{
+router.get('/:animalId/donate', async (req, res) => {
     const userId = req.user?._id
     try {
         await animalsService.donate(req.params.animalId, userId);
         res.redirect(`/animals/${req.params.animalId}/details`);
-        
+
     } catch (error) {
         res.redirect('/404');
+    }
+});
+
+router.get('/:animalId/delete', async (req, res) => {
+    try {
+        await animalsService.delete(req.params.animalId);
+        res.redirect('/animals/dashboard');
+    } catch (error) {
+        res.redirect('/404');
+    }
+});
+
+router.get('/:animalId/edit', async (req, res) => {
+    try {
+        const animal = await animalsService.getOne(req.params.animalId).lean();
+        res.render('animals/edit', { animal });
+    } catch (error) {
+        res.redirect('/404')
     }
 })
 
