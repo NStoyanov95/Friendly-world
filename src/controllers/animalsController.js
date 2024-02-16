@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const animalsService = require('../services/animalsService');
 
-const { isAuth, isOwner, isUser } = require('../middlewares/authMiddleware')
+const { isAuth, isOwner, isUser, isDonate } = require('../middlewares/authMiddleware')
 const { getErrorMessage } = require('../utils/errorUtils');
 
 router.get('/create', isAuth,(req, res) => {
@@ -41,7 +41,7 @@ router.get('/:animalId/details', async (req, res) => {
     }
 });
 
-router.get('/:animalId/donate',isAuth, isUser, async (req, res) => {
+router.get('/:animalId/donate',isAuth, isUser, isDonate, async (req, res) => {
     const userId = req.user?._id
     try {
         await animalsService.donate(req.params.animalId, userId);

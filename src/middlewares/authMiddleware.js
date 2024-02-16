@@ -46,15 +46,13 @@ exports.isOwner = async (req, res, next) => {
 exports.isUser = async (req, res, next) => {
     const animal = await animalsService.getOne(req.params.animalId);
     const user = req.user?._id;
-    console.log(user);
-    console.log(animal);
     const isUser = animal.owner._id != user;
-    
+
     if (isUser) {
         return next();
     }
     return res.redirect('/404')
-    
+
 }
 
 exports.isGuest = (req, res, next) => {
@@ -62,6 +60,18 @@ exports.isGuest = (req, res, next) => {
 
     if (!user) {
         return next();
+    }
+
+    return res.redirect('/404');
+}
+
+exports.isDonate = async(req, res, next) => {
+    const animal = await animalsService.getOne(req.params.animalId).populate('donations');
+
+    const isDonated = animal.donations.some(x => x._id == req.user?._id);
+
+    if (!isDonated) {
+        return next()
     }
 
     return res.redirect('/404');
