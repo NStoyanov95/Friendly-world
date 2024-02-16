@@ -16,7 +16,7 @@ router.post('/create', isAuth, async (req, res) => {
         await animalsService.create(animalData);
         res.redirect('/animals/dashboard');
     } catch (error) {
-        res.render('animals/create', { error: getErrorMessage(error) });
+        res.render('animals/create', { error: getErrorMessage(error), ...animalData });
     }
 });
 
