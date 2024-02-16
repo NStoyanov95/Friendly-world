@@ -1,11 +1,13 @@
 const jwt = require('../lib/jwt');
 const ENV = require('../utils/constants');
 
+const animalsService = require('../services/animalsService');
+
 exports.auth = async (req, res, next) => {
     const token = req.cookies['auth'];
 
     if (!token) {
-      return next();
+        return next();
     }
 
     try {
@@ -23,8 +25,44 @@ exports.auth = async (req, res, next) => {
 
 exports.isAuth = (req, res, next) => {
     if (!req.user) {
-        return res.redirect('/auth/login');
+        return res.redirect('/404');
     }
 
     next();
+};
+
+exports.isOwner = async (req, res, next) => {
+
+    const animal = await animalsService.getOne(req.params.animalId);
+    const user = req.user?._id;
+    const isOwner = user == animal.owner._id;
+
+    if (!isOwner) {
+        return res.redirect('/404');
+    }
+
+    return next();
+};
+exports.isUser = async (req, res, next) => {
+    const animal = await animalsService.getOne(req.params.animalId);
+    const user = req.user?._id;
+    console.log(user);
+    console.log(animal);
+    const isUser = animal.owner._id != user;
+    
+    if (isUser) {
+        return next();
+    }
+    return res.redirect('/404')
+    
+}
+
+exports.isGuest = (req, res, next) => {
+    const user = req.user;
+
+    if (!user) {
+        return next();
+    }
+
+    return res.redirect('/404');
 }

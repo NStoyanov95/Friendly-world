@@ -2,13 +2,14 @@ const router = require('express').Router();
 
 const animalsService = require('../services/animalsService');
 
+const { isAuth, isOwner, isUser } = require('../middlewares/authMiddleware')
 const { getErrorMessage } = require('../utils/errorUtils');
 
-router.get('/create', (req, res) => {
+router.get('/create', isAuth,(req, res) => {
     res.render('animals/create');
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', isAuth, async (req, res) => {
     animalData = req.body;
     animalData.owner = req.user._id
     try {
@@ -40,7 +41,7 @@ router.get('/:animalId/details', async (req, res) => {
     }
 });
 
-router.get('/:animalId/donate', async (req, res) => {
+router.get('/:animalId/donate',isAuth, isUser, async (req, res) => {
     const userId = req.user?._id
     try {
         await animalsService.donate(req.params.animalId, userId);
@@ -51,7 +52,7 @@ router.get('/:animalId/donate', async (req, res) => {
     }
 });
 
-router.get('/:animalId/delete', async (req, res) => {
+router.get('/:animalId/delete',isAuth, isOwner, async (req, res) => {
     try {
         await animalsService.delete(req.params.animalId);
         res.redirect('/animals/dashboard');
@@ -60,7 +61,7 @@ router.get('/:animalId/delete', async (req, res) => {
     }
 });
 
-router.get('/:animalId/edit', async (req, res) => {
+router.get('/:animalId/edit',isAuth,isOwner, async (req, res) => {
     try {
         const animal = await animalsService.getOne(req.params.animalId).lean();
         res.render('animals/edit', { animal });
@@ -69,12 +70,12 @@ router.get('/:animalId/edit', async (req, res) => {
     }
 })
 
-router.post('/:animals/edit', async (req, res) => {
+router.post('/:animalId/edit',isAuth,isOwner, async (req, res) => {
     const animal = req.body;
 
     try {
-        await animalsService.update(req.params.animals, animal);
-        res.redirect(`/animals/${req.params.animals}/details`);
+        await animalsService.update(req.params.animalId, animal);
+        res.redirect(`/animals/${req.params.animalId}/details`);
     } catch (error) {
         res.render('animals/edit', { error: getErrorMessage(error), animal });
     }
