@@ -79,6 +79,10 @@ router.post('/:animalId/edit',isAuth,isOwner, async (req, res) => {
     } catch (error) {
         res.render('animals/edit', { error: getErrorMessage(error), animal });
     }
+});
+
+router.get('/search', (req,res) =>{
+    res.render('animals/search')
 })
 
 
