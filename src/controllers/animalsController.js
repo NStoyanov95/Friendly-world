@@ -5,7 +5,7 @@ const animalsService = require('../services/animalsService');
 const { isAuth, isOwner, isUser, isDonate } = require('../middlewares/authMiddleware')
 const { getErrorMessage } = require('../utils/errorUtils');
 
-router.get('/create', isAuth,(req, res) => {
+router.get('/create', isAuth, (req, res) => {
     res.render('animals/create');
 });
 
@@ -41,7 +41,7 @@ router.get('/:animalId/details', async (req, res) => {
     }
 });
 
-router.get('/:animalId/donate',isAuth, isUser, isDonate, async (req, res) => {
+router.get('/:animalId/donate', isAuth, isUser, isDonate, async (req, res) => {
     const userId = req.user?._id
     try {
         await animalsService.donate(req.params.animalId, userId);
@@ -52,7 +52,7 @@ router.get('/:animalId/donate',isAuth, isUser, isDonate, async (req, res) => {
     }
 });
 
-router.get('/:animalId/delete',isAuth, isOwner, async (req, res) => {
+router.get('/:animalId/delete', isAuth, isOwner, async (req, res) => {
     try {
         await animalsService.delete(req.params.animalId);
         res.redirect('/animals/dashboard');
@@ -61,7 +61,7 @@ router.get('/:animalId/delete',isAuth, isOwner, async (req, res) => {
     }
 });
 
-router.get('/:animalId/edit',isAuth,isOwner, async (req, res) => {
+router.get('/:animalId/edit', isAuth, isOwner, async (req, res) => {
     try {
         const animal = await animalsService.getOne(req.params.animalId).lean();
         res.render('animals/edit', { animal });
@@ -70,7 +70,7 @@ router.get('/:animalId/edit',isAuth,isOwner, async (req, res) => {
     }
 })
 
-router.post('/:animalId/edit',isAuth,isOwner, async (req, res) => {
+router.post('/:animalId/edit', isAuth, isOwner, async (req, res) => {
     const animal = req.body;
 
     try {
@@ -81,9 +81,28 @@ router.post('/:animalId/edit',isAuth,isOwner, async (req, res) => {
     }
 });
 
-router.get('/search', (req,res) =>{
-    res.render('animals/search')
+router.get('/search', async (req, res) => {
+    try {
+        const animals = await animalsService.getAll().lean()
+        res.render('animals/search', { animals })
+    } catch (error) {
+        res.redirect('/404');
+    }
+});
+
+router.post('/search', async (req, res) => {
+    const { search } = req.body
+    try {
+        const animals = await animalsService.search(search).lean();
+        console.log(search);
+        res.render('animals/search', { animals });
+    } catch (error) {
+        res.redirect('/404');
+        console.log(error.message);
+    }
 })
+
+
 
 
 module.exports = router;

@@ -13,3 +13,5 @@ exports.update = (animalId, animalData) => Animal.findByIdAndUpdate(animalId, an
 exports.delete = (animalId) => Animal.findByIdAndDelete(animalId);
 
 exports.donate = (animalId, userId) => Animal.findByIdAndUpdate(animalId, { $push: { donations: userId } });
+
+exports.search = (search) => Animal.find({location: new RegExp(search, "i")});
